@@ -1,10 +1,10 @@
 #include "broke_line1.h"
-#include "broke_line1.cpp"
 #include "iostream"
 #include "cmath"
 #include "cstdlib"
 #include "string"
 #include "exception"
+#include "complex"
 
 //Класс ломаных линий на плоскости с произвольным количеством вершин .
 //Описать вспомогательную структуру в стиле Си для представления точек (вершин) на плоскости. Как минимум, предоставить:
@@ -50,35 +50,30 @@ int menu()
 template <typename T>
 void sum_lines(broken_line<T> &obj){
     int second_line_p_amount = 0;       
-
     std::cout << "Please enter a value for the number of points to create a line \n";
     std::cin >> second_line_p_amount;
     if (second_line_p_amount < 0 || second_line_p_amount != int(second_line_p_amount) ||
-    (second_line_p_amount < 0 && second_line_p_amount != int(second_line_p_amount))) throw invalid_number();
+    (second_line_p_amount < 0 && second_line_p_amount != int(second_line_p_amount))) throw invalid_index();
 
-    double x2 = 0.0, y2 = 0.0;
-            for (int i = 0; i < second_line_p_amount; i++)
-            {
-                std::cin >> x2;
-                std::cin >> y2;
-            }
-            point<double> a(x2, y2);
-            broken_line<double> second_line(a, second_line_p_amount);
-
+    int select_var2 = 0;
+    std::cout << "Please enter a type of the line:\n1 - INT \n2 - DOUBLE \n3 - COMPLEX(real value - double; imag value - double) \n";
+    std::cin >> select_var2;
+    double x = 0.0;
+    if (select_var2 == 1) x = (int)x;
+    broken_line<typeof(x)> second_line(second_line_p_amount, select_var2);
     print_line(second_line);
     std::cout << '\n';
-    //obj += second_line;
+    obj += second_line;
 }
 
 template<typename T>
 void sum_line_and_point_to_end(broken_line<T> &obj)
 {
-    double x = 0, y = 0;
-
+    double x = 0.0, y = 0.0;
     std::cout << "Enter point coordinates - INPUT ORDER: x -> Enter y -> Enter\n";
     std::cin >> x;
     std::cin >> y;
-    //obj += point(x, y);
+    obj += point<T>(x, y);
 }
 
 int to_create_user_index()
@@ -105,31 +100,27 @@ int main()
 {
     int first_line_p_amount = 0;        
     int select_var = 0;
+    int select_var1 = 0;
     
     try 
     {
     std::cout << "Please enter a value for the number of points to create a line \n";
     std::cin >> first_line_p_amount;
     if (first_line_p_amount < 0 || first_line_p_amount != int(first_line_p_amount) ||
-    (first_line_p_amount < 0 && first_line_p_amount != int(first_line_p_amount))) throw invalid_number();
+    (first_line_p_amount < 0 && first_line_p_amount != int(first_line_p_amount))) throw invalid_index();
     } catch (exc& err)
     {
         err.print();
         std::cin >> first_line_p_amount;
     }
-
-    double x = 0.0, y = 0.0;
-    for (int i = 0; i < first_line_p_amount; i++)
-    {
-        std::cin >> x;
-        std::cin >> y;
-    }
-    point<double> a(x, y);
-    broken_line<double> first_line(a, first_line_p_amount);
+    std::cout << "Please enter a type of the line:\n1 - INT \n2 - DOUBLE \n3 - COMPLEX(real value - double; imag value - double) \n";
+    std::cin >> select_var1;
+    double x = 0.0;
+    if (select_var1 == 1) x = (int)x;
+    broken_line<typeof(x)> first_line(first_line_p_amount, select_var);
     print_line(first_line);
     std::cout << "Line include " << first_line_p_amount << " points" << '\n';
     
-
     while (select_var != 1) 
     {
     try 
@@ -166,14 +157,12 @@ int main()
             if (second_line_p_amount < 0 || second_line_p_amount != int(second_line_p_amount) ||
             (second_line_p_amount < 0 && second_line_p_amount != int(second_line_p_amount))) throw invalid_number();
 
-            double x1 = 0.0, y1 = 0.0;
-            for (int i = 0; i < second_line_p_amount; i++)
-            {
-                std::cin >> x1;
-                std::cin >> y1;
-            }
-            point<double> a(x1, y1);
-            broken_line<double> second_line(a, second_line_p_amount);
+            std::cout << "Please enter a type of the line:\n1 - INT \n2 - DOUBLE \n3 - COMPLEX(real value - double; imag value - double) \n";
+            std::cin >> select_var;
+            double x = 0.0;
+            if (select_var == 1) x = (int)x;
+            broken_line<typeof(x)> second_line(first_line_p_amount, select_var);
+            print_line(second_line);
 
             if (compare_lines(first_line, second_line) == 0) 
             {

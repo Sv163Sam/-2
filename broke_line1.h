@@ -2,16 +2,18 @@
 #include <iostream> 
 #include <utility> 
 #include "exception.cpp"
+#include "cmath"
+#include "complex"
 
 template<typename A>
 struct point 
 { 
   A _x, _y; 
-  point<double>()
+  point<A>()
   {
     _x=0.0;_y=0.0;
   }
-  point<double>(A x, A y)
+  point<A>(A x, A y)
   {
     _x=x;
     _y=y;
@@ -53,25 +55,42 @@ public:
 
     broken_line(): _p(NULL), _size(0) {} 
 
-    broken_line<double>(point<T>& var, const unsigned int size) 
+    broken_line<T>(const unsigned int size, int select_var) 
     { 
-       _size = size; 
-       _p = new point<T>[_size]; 
-       for (int i = 0; i < _size; i++) 
-       {
-           _p[i]._x = var._x;
-           _p[i]._y = var._y;
-           if (i > 1)
-           {
-               for (int j = 0; j < i; j++)
-               {
-               if (_p[i]._x == _p[j]._x && _p[i]._y == _p[j]._y) throw equal_points();
-               }
-           }
-           if (_p[i]._x == (-0)) _p[i]._x = 0;
-           if (_p[i]._y == (-0)) _p[i]._y = 0;
-       }
+        _size = size; 
+        _p = new point<T>[_size];   
+        for (int i = 0; i < _size; i++)
+        {   
+            std::cout << "Please enter a value of x, y \n";
+            std::cin >> _p[i]._x;
+            std::cin >> _p[i]._y;
+            if (select_var == 1)
+            {
+                _p[i]._x = (int)_p[i]._x;
+                _p[i]._y = (int)_p[i]._y;
+            }
+            if (select_var == 2)
+            {
+                _p[i]._x = (double)_p[i]._x;
+                _p[i]._y = (double)_p[i]._y;
+            }
+            if (select_var == 3)
+            {
+                std::complex<double> c_point((double)_p[i]._x, (double)_p[i]._y);
+                _p[i]._x = c_point.real();
+                _p[i]._y = c_point.imag();
+            } 
+        if (i > 1)
+        {
+            for (int j = 0; j < i; j++)
+            {
+            if (_p[i]._x == _p[j]._x && _p[i]._y == _p[j]._y) throw equal_points();
+            }
+        }
+        if (_p[i]._x == (-0)) _p[i]._x = 0;
+        if (_p[i]._y == (-0)) _p[i]._y = 0;    
     } 
+    }
 
     broken_line(const broken_line<T>& line) 
     { 
@@ -111,68 +130,66 @@ public:
         return _size;
     }
 
-    bool insert_point(const point<T>& p, bool value)
+    void insert_point_to_start(const point<T>& point)
     {
-        for (int i = 0; i < _size; i++)
+    int point_to_start = 0;
+    insert_point(point, point_to_start);
+    }   
+
+    void insert_point(const point<T>& p, int value)
+    {
+    for (int i = 0; i < _size; i++)
+    {
+       if (p._x == _p[i]._x && p._y == _p[i]._y) throw equal_points();
+    }
+    point<T>* temp = new point<T>[_size];
+    _size++;
+    for (unsigned int i = 0; i < _size-1; i++) 
+    {
+        temp[i] = _p[i];
+    }
+    delete[] _p;
+    _p = new point<T>[_size]; 
+    if (value == 0)
+    {
+        for (unsigned int i = 0; i < _size-1; i++) 
         {
-           if (p._x == _p[i]._x && p._y == _p[i]._y) throw equal_points();
+            _p[i+1] = temp[i];
         }
-        point<T>* temp = new point<T>[_size];
+        _p[0]._x = p._x;
+        _p[0]._y = p._y;
+    }
+    else 
+    {
         for (unsigned int i = 0; i < _size; i++) 
         {
-            temp[i] = _p[i];
+            _p[i] = temp[i];
         }
-        _p = new point<T>[_size + 1]; 
-        _size++;
-        if (value == true)
-        {
-            for (unsigned int i = 0; i < _size-1; i++) 
-            {
-                _p[i+1] = temp[i];
-            }
-            _p[0]._x = p._x;
-            _p[0]._y = p._y;
-        }
-        else 
-        {
-            for (unsigned int i = 0; i < _size; i++) 
-            {
-                _p[i+1] = temp[i];
-            }
-            _p[_size-1]._x = p._x;
-            _p[_size-1]._y = p._y;
-        }
-        delete[] temp;
+        _p[_size-1]._x = p._x;
+        _p[_size-1]._y = p._y;
+    }
+    delete[] temp;
     }
 
     broken_line<T>& operator+=(const point<T>& point) 
     {
-        int value = 0;
-        std::cout << "Please enter 0 - if you want to insert a point to start, 1 - if to end" << std::endl;
-        std::cin >> value;
-        if (value == 0)
-        insert_point(point, true);
-        else insert_point(point, false);
+        int point_to_end = 1;
+        insert_point(point, point_to_end);
         return *this;
     }
-    broken_line<T> operator+(const point<T>& point) const
-    {
-        broken_line<T> clone(*this);
-        clone += point;
-        return clone;
-    }
+    
     broken_line<T>& operator+=(const broken_line<T>& line_s)
     {
         if (*this == line_s) throw equal_lines();
         for (int i = 0; i < line_s._size; i++)
         {
-            insert_point(line_s._p[i], false);
+            insert_point(line_s._p[i], 1);
         }
         return *this;
     }
     broken_line<T> operator+(const broken_line<T>& line_s) const
     {
-        broken_line<T> clone(*this);
+        broken_line clone(*this);
         clone += line_s;
         return clone;
     }
@@ -182,20 +199,34 @@ public:
        delete[] _p; 
     } 
 
-    double len(const broken_line<T>& line)
-        {
-            double sum=0;
-            if (line._size == 1)
-            {
-                return sum;
-            }
-            for (int i = 0; i < line._size - 1; i++)
-            {
+    int distance(const ::point<int>& point, const ::point<int>& point1)
+    {
+        return sqrt(pow((point1._x - point._x), 2) + pow((point1._y - point._y), 2));
+    }
+    double distance(const ::point<double>& point, const ::point<double>& point1)
+    {
+       return sqrt(pow((point1._x - point._x), 2) + pow((point1._y - point._y), 2));
+    }
+    std::complex<double> distance(const point<std::complex<double> >& point1, const point<std::complex<double> >& point2)
+    {
+        std::complex<double> z;
+        z = sqrt(pow((point2._x - point1._x), 2) + pow((point2._y - point1._y), 2));
+        return z;
+    }
 
-                sum += sqrt(pow((line._p[i + 1]._x - line._p[i]._x), 2) + pow((line._p[i + 1]._y - line._p[i]._y), 2));
-            }
-            return sum;
+    T len(const broken_line<T>& line)
+    {
+        double var = 0;
+        if (line._size == 1)
+        {
+            return var;
         }
+        for (int i = 0; i < line._size - 1; i++)
+        {
+            var += distance(line._p[i], line._p[i + 1]);
+        }
+        return var;
+    }
 
     bool operator > (const broken_line<T>& a)
         {
@@ -232,3 +263,31 @@ public:
         }
 
 };
+template<typename T>
+std::istream& operator >> (std::istream& in, point<T>& lhs) 
+{ 
+   std::cout << "Input x: "; 
+   in >> lhs._x; 
+   std::cout << "Input y: "; 
+   in >> lhs._y; 
+   return in; 
+} 
+template<typename T>
+std::ostream& operator << (std::ostream& out ,const point<T>& lhs) 
+{ 
+    out << "\nx - " << lhs._x; 
+    out << "\ny - " << lhs._y; 
+    return out; 
+} 
+template<typename T>
+broken_line<T>& operator+(broken_line<T>& obj ,const point<T>& point) 
+{
+    obj += point;
+    return obj;
+}
+template<typename T>
+broken_line<T>& operator+(const point<T>& point, broken_line<T>& obj)
+{
+    obj.insert_point_to_start(point);
+    return obj;
+}

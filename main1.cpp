@@ -5,6 +5,7 @@
 #include "string"
 #include "exception"
 #include "complex"
+#include <typeinfo>	
 
 //Класс ломаных линий на плоскости с произвольным количеством вершин .
 //Описать вспомогательную структуру в стиле Си для представления точек (вершин) на плоскости. Как минимум, предоставить:
@@ -60,7 +61,7 @@ void sum_lines(broken_line<T> &obj){
     std::cin >> select_var2;
     double x = 0.0;
     if (select_var2 == 1) x = (int)x;
-    broken_line<typeof(x)> second_line(second_line_p_amount, select_var2);
+    broken_line<T> second_line(second_line_p_amount, select_var2);
     print_line(second_line);
     std::cout << '\n';
     obj += second_line;
@@ -101,6 +102,7 @@ int main()
     int first_line_p_amount = 0;        
     int select_var = 0;
     int select_var1 = 0;
+    int select_var2 = 0;
     
     try 
     {
@@ -115,9 +117,12 @@ int main()
     }
     std::cout << "Please enter a type of the line:\n1 - INT \n2 - DOUBLE \n3 - COMPLEX(real value - double; imag value - double) \n";
     std::cin >> select_var1;
-    double x = 0.0;
-    if (select_var1 == 1) x = (int)x;
-    broken_line<typeof(x)> first_line(first_line_p_amount, select_var);
+    double int_var = 0;
+    if (select_var1 == 1) 
+    int_var = (int)int_var;
+
+    std::cout << typeid(int_var).name()   << std::endl;
+    broken_line<int> first_line(first_line_p_amount, select_var1);
     print_line(first_line);
     std::cout << "Line include " << first_line_p_amount << " points" << '\n';
     
@@ -158,10 +163,13 @@ int main()
             (second_line_p_amount < 0 && second_line_p_amount != int(second_line_p_amount))) throw invalid_number();
 
             std::cout << "Please enter a type of the line:\n1 - INT \n2 - DOUBLE \n3 - COMPLEX(real value - double; imag value - double) \n";
-            std::cin >> select_var;
-            double x = 0.0;
-            if (select_var == 1) x = (int)x;
-            broken_line<typeof(x)> second_line(first_line_p_amount, select_var);
+            std::cin >> select_var2;
+            double int_var = 0;
+            if (select_var2 == 1) 
+            int_var = (int)int_var;
+
+            std::cout << typeid(int_var).name()   << std::endl;
+            broken_line<int> second_line(second_line_p_amount, select_var1);
             print_line(second_line);
 
             if (compare_lines(first_line, second_line) == 0) 

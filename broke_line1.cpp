@@ -1,5 +1,5 @@
-#include "broke_line.h" 
-#include "cmath"
+//#include "broke_line.h" 
+//#include "cmath"
 //#include "exception.cpp"
 
 /*point::point()
@@ -148,7 +148,7 @@ broken_line broken_line::operator+(const broken_line& line_s) const
 broken_line::~broken_line() 
 { 
    delete[] _p; 
-} */
+} 
 template<typename T>
 std::istream& operator >> (std::istream& in, point<T>& lhs) 
 { 
@@ -166,7 +166,7 @@ std::ostream& operator << (std::ostream& out ,const point<T>& lhs)
     return out; 
 } 
 
-/*double broken_line::len(const broken_line& line)
+double broken_line::len(const broken_line& line)
     {
         double sum=0;
         if (line._size == 1)
